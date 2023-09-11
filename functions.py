@@ -1,0 +1,46 @@
+from credentials import API_KEY # Requires own API KEY to request API response
+import requests
+
+def request_word(word):
+    request_session = requests.Session()
+
+    URL = f"https://api.wordnik.com/v4/word.json/{word}/definitions"
+
+    parameters = {
+        "limit": "10",
+        "includeRelated": "false",
+        "sourceDictionaries": "wordnet",
+        "useCanonical": "true",
+        "includeTags": "false",
+        "api_key": API_KEY,
+    }
+
+    response = request_session.get(url=URL, params=parameters).json()
+
+    return extract_definitions(response)
+
+def extract_definitions(response):
+	definitions = {}
+	for item in response:
+		pfs = item['partOfSpeech']
+		definition = item['text']
+		if pfs not in definitions.keys():
+			definitions[pfs]=[]
+		definitions[pfs].append(definition)
+
+	return json_to_html(definitions)
+
+def json_to_html(definitions):
+    html_sample=""
+    count = 1
+
+    list_pfs = list(definitions.keys())
+
+    for pfs in list_pfs:
+        html_sample += f"<h5 style='color: #ffffff'>{pfs.title()}</h5>"
+        for definition in definitions[pfs]:
+            html_sample += f"<p style='color: #ffffff; font-size: 12px'>‎ {count}. {definition}</p>"
+            count += 1
+        count = 1
+
+    return html_sample

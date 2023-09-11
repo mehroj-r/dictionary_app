@@ -1,5 +1,7 @@
 import customtkinter as ctk
+from functions import request_word
 from PIL import ImageTk, Image
+from tkhtmlview import HTMLLabel
 
 # Constant app parameters
 root = ctk.CTk()
@@ -18,6 +20,8 @@ ctk.set_appearance_mode("system")
 restart_image = ctk.CTkImage(light_image=Image.open("./data/restart.png"),
                                   dark_image=Image.open("./data/restart.png"),
                                   size=(30, 30))
+
+
 
 class AnimFrame2(ctk.CTkFrame):
 	def __init__(self, parent, width, height, fg_color):
@@ -39,6 +43,9 @@ class AnimFrame2(ctk.CTkFrame):
 			self.after(1, self.animate_back_up)
 		else:
 			search_word_frame.animate_back_down()
+
+
+
 
 class AnimFrame1(ctk.CTkFrame):
 	def __init__(self, parent, width, height):
@@ -62,10 +69,19 @@ class AnimFrame1(ctk.CTkFrame):
 			self.after(1, self.animate_back_down)
 
 
+
+
+
 # Function to start the process
 def search_word_api(*x):
 	entry_input = word_entry.get()
 	if entry_input:
+		# Receive API response
+		response = request_word(entry_input.lower())
+
+		# HTML render for response visualization
+		html_view.set_html(response)
+
 		# Show animation between Input and Response frames
 		search_word_frame.animate_up()	
 
@@ -80,6 +96,8 @@ def back_to_new_word():
 
 	# Clearing input entry
 	word_entry.delete(0, 999)
+
+
 
 
 ## Frame for text input
@@ -105,6 +123,8 @@ progressbar.start()
 #progressbar.pack(pady=30)
 
 
+
+
 ## Frame for response visualization
 
 result_frame = AnimFrame2(root, width=800, height=700, fg_color="transparent")
@@ -117,16 +137,15 @@ new_word_btn.place(relx=0.9, rely=0.08, anchor='center')
 current_searched_word = ctk.CTkLabel(result_frame, text="", font=("Arial bold", 50))
 current_searched_word.place(relx=0.5, rely=0.08, anchor='center')
 
-# Tabs to show the data nicely
-data_tabs = ctk.CTkTabview(master=result_frame, width=700, height=400)
-data_tabs.place(relx=0.5, rely=0.55, anchor='center')
 
-data_tabs.add("Definition")
-data_tabs.add("Pronunciation")
-data_tabs.add("Examples")
-data_tabs.add("Translation")
 
-data_tabs.set("Definition")
+## Frame with scrolling to display the data
+
+data_frame = ctk.CTkScrollableFrame(master=result_frame, width=700, height=400)
+data_frame.place(relx=0.5, rely=0.55, anchor='center')
+
+html_view = HTMLLabel(data_frame, html="", background="#212121")
+html_view.pack(pady=20, padx=20)
 
 # Bind 'enter' to start the process
 root.bind('<Return>', search_word_api)

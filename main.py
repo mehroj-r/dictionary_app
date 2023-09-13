@@ -3,6 +3,8 @@ from functions import request_word
 from PIL import ImageTk, Image
 from tkhtmlview import HTMLLabel
 
+
+
 # Constant app parameters
 root = ctk.CTk()
 root.title("R-Dictionary App")
@@ -12,6 +14,7 @@ root.geometry("%dx%d+%d+%d" % (800, 500, ((width - 800) // 2), ((height - 500) /
 root.resizable(False, False)
 ctk.set_default_color_theme("dark-blue")
 ctk.set_appearance_mode("system")
+
 
 
 ## Data resources
@@ -44,9 +47,6 @@ class AnimFrame2(ctk.CTkFrame):
 		else:
 			search_word_frame.animate_back_down()
 
-
-
-
 class AnimFrame1(ctk.CTkFrame):
 	def __init__(self, parent, width, height):
 		super().__init__(master=parent, width=width, height=height)
@@ -70,32 +70,49 @@ class AnimFrame1(ctk.CTkFrame):
 
 
 
-
-
 # Function to start the process
 def search_word_api(*x):
-	entry_input = word_entry.get()
+	# Load entry value to perform operations with it
+	entry_input = word_entry.get().lower()
+
 	if entry_input:
+
 		# Receive API response
-		response = request_word(entry_input.lower())
+		response = request_word(entry_input)
 
-		# HTML render for response visualization
-		html_view.set_html(response)
+		# Check if request was successful
+		if response != False:
 
-		# Show animation between Input and Response frames
-		search_word_frame.animate_up()	
+			# HTML render for response visualization
+			html_view.set_html(response)
 
-		# Passing new word as title for result_frame
-		current_searched_word.configure(text = entry_input)
+			# Show animation between Input and Response frames
+			search_word_frame.animate_up()	
+
+			# Passing new word as title for result_frame
+			current_searched_word.configure(text = entry_input)
+
+			# Bind 'espace' to comeback to input menu
+			root.bind('<Escape>', back_to_new_word)
+
+			# Unbind unnessary key
+			root.bind('<Return>')
+
 
 # Function to restart the process
-def back_to_new_word():
+def back_to_new_word(*x):
 
 	# Initializing animation
 	result_frame.animate_back_up()
 
 	# Clearing input entry
 	word_entry.delete(0, 999)
+
+	# Bind 'enter' to start the request
+	root.bind('<Return>', search_word_api)
+
+	# Unbind unnessary key
+	root.unbind('<Escape>')
 
 
 
@@ -116,12 +133,6 @@ word_entry.pack(padx=40)
 # Button to start the process
 button_search = ctk.CTkButton(search_word_frame, text="Search", command=search_word_api)
 button_search.pack(pady=40)
-
-# Loading ProgressBar
-progressbar = ctk.CTkProgressBar(root, orientation="horizontal", mode="indeterminate")
-progressbar.start()
-#progressbar.pack(pady=30)
-
 
 
 
@@ -144,6 +155,7 @@ current_searched_word.place(relx=0.5, rely=0.08, anchor='center')
 data_frame = ctk.CTkScrollableFrame(master=result_frame, width=700, height=400)
 data_frame.place(relx=0.5, rely=0.55, anchor='center')
 
+# HTML label to display API resopnse
 html_view = HTMLLabel(data_frame, html="", background="#212121")
 html_view.pack(pady=20, padx=20)
 

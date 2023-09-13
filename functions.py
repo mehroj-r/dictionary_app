@@ -15,9 +15,14 @@ def request_word(word):
         "api_key": API_KEY,
     }
 
-    response = request_session.get(url=URL, params=parameters).json()
+    response = request_session.get(url=URL, params=parameters)
 
-    return extract_definitions(response)
+    if response.status_code == 200:
+        return extract_definitions(response.json())
+    else:
+        return False
+
+    
 
 def extract_definitions(response):
 	definitions = {}
@@ -37,10 +42,12 @@ def json_to_html(definitions):
     list_pfs = list(definitions.keys())
 
     for pfs in list_pfs:
-        html_sample += f"<h5 style='color: #ffffff'>{pfs.title()}</h5>"
+        html_sample += f"<h5 style='color: #ffffff;'>{pfs.title()}</h5>"
         for definition in definitions[pfs]:
-            html_sample += f"<p style='color: #ffffff; font-size: 12px'>‎ {count}. {definition}</p>"
+            html_sample += f"<p style='color: #ffffff; font-size: 12px;'>‎ {count}. {definition}</p>"
             count += 1
+        if list_pfs[-1] != pfs:
+            html_sample += "<div style='font-size: 1px;'>‎</div>"
         count = 1
 
     return html_sample

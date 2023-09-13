@@ -13,7 +13,7 @@ height= root.winfo_screenheight()
 root.geometry("%dx%d+%d+%d" % (800, 500, ((width - 800) // 2), ((height - 500) / 2)))
 root.resizable(False, False)
 ctk.set_default_color_theme("dark-blue")
-ctk.set_appearance_mode("system")
+ctk.set_appearance_mode("dark")
 
 
 
@@ -68,6 +68,31 @@ class AnimFrame1(ctk.CTkFrame):
 		if self.rel_y < 0.5:
 			self.after(1, self.animate_back_down)
 
+class AnimErrorFrame(ctk.CTkFrame):
+	def __init__(self, parent, width, height, border_width, border_color):
+		super().__init__(master=parent, width=width, height=height, border_color=border_color, border_width=border_width)
+
+		self.rel_x=0.85
+		self.rel_y=-0.08
+		self.status="inactive"
+
+	def animate(self):
+		self.rel_y += 0.001
+		self.place(relx=self.rel_x, rely=self.rel_y, anchor='center')
+		if self.rel_y < 0.08:
+			self.after(1, self.animate)
+		else:
+			self.status = "active"
+			self.after(3000, self.animate_back)
+
+	def animate_back(self):
+		self.rel_y -= 0.001
+		self.place(relx=self.rel_x, rely=self.rel_y, anchor='center')
+		if self.rel_y > -0.08:
+			self.after(1, self.animate_back)
+		else:
+			self.status="inactive"
+
 
 
 # Function to start the process
@@ -83,6 +108,10 @@ def search_word_api(*x):
 		# Check if request was successful
 		if response != False:
 
+			# Return the error popup
+			if error_popup.status != "inactive":
+				error_popup.animate_back()
+
 			# HTML render for response visualization
 			html_view.set_html(response)
 
@@ -97,6 +126,10 @@ def search_word_api(*x):
 
 			# Unbind unnessary key
 			root.bind('<Return>')
+		else:
+			# Activate error popup
+			if error_popup.status != "active":
+				error_popup.animate()
 
 
 # Function to restart the process
@@ -134,7 +167,12 @@ word_entry.pack(padx=40)
 button_search = ctk.CTkButton(search_word_frame, text="Search", command=search_word_api)
 button_search.pack(pady=40)
 
+# Error pop-up to alert the response was not 200
+error_popup = AnimErrorFrame(root, width = 200, height = 50, border_width=2, border_color="#f77c74")
 
+# Label for Error
+error_label = ctk.CTkLabel(error_popup, text="The word was not found", fg_color="transparent")
+error_label.place(relx=0.5, rely=0.5, anchor='center')
 
 ## Frame for response visualization
 

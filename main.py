@@ -11,18 +11,16 @@ root.title("R-Dictionary App")
 width= root.winfo_screenwidth()
 height= root.winfo_screenheight()
 root.geometry("%dx%d+%d+%d" % (800, 500, ((width - 800) // 2), ((height - 500) / 2)))
-root.resizable(False, False)
-ctk.set_default_color_theme("dark-blue")
-ctk.set_appearance_mode("dark")
+root.minsize(800, 500)
+ctk.set_default_color_theme("./data/custom-r.json")
+ctk.set_appearance_mode("system")
 
 
 
 ## Data resources
 
 # Image for restart button
-restart_image = ctk.CTkImage(light_image=Image.open("./data/restart.png"),
-                                  dark_image=Image.open("./data/restart.png"),
-                                  size=(30, 30))
+restart_image = ctk.CTkImage(light_image=Image.open("./data/restart.png"), dark_image=Image.open("./data/restart.png"), size=(30, 30))
 
 
 

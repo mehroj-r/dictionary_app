@@ -6,7 +6,7 @@ from tkhtmlview import HTMLLabel
 
 
 # Constant app parameters
-root = ctk.CTk()
+root = ctk.CTk(fg_color=("white", "#141414"))
 root.title("R-Dictionary App")
 width= root.winfo_screenwidth()
 height= root.winfo_screenheight()
@@ -95,6 +95,7 @@ class AnimErrorFrame(ctk.CTkFrame):
 
 # Function to start the process
 def search_word_api(*x):
+
 	# Load entry value to perform operations with it
 	entry_input = word_entry.get().lower()
 
@@ -192,7 +193,7 @@ data_frame = ctk.CTkScrollableFrame(master=result_frame, width=700, height=400)
 data_frame.place(relx=0.5, rely=0.55, anchor='center')
 
 # HTML label to display API resopnse
-html_view = HTMLLabel(data_frame, html="", background="#212121")
+html_view = HTMLLabel(data_frame, html="", background="#191919")
 html_view.pack(pady=20, padx=20)
 
 # Bind 'enter' to start the process

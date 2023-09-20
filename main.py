@@ -20,8 +20,12 @@ ctk.set_default_color_theme("./data/custom-r.json")
 
 if darkdetect.theme() == "Light":
 	ctk.set_appearance_mode("light")
+	frame_color = "#E5E5E5"
 else:
 	ctk.set_appearance_mode("dark")
+	frame_color = "#191919"
+
+
 
 ## Data resources
 
@@ -101,14 +105,7 @@ class AnimErrorFrame(ctk.CTkFrame):
 
 # Function to start the process
 def search_word_api(*x):
-
-	# HTML label to display API response (Follows light/dark theme)
-	if darkdetect.theme() == "Light":
-		html_view = HTMLLabel(data_frame, html="", background="#E5E5E5")
-		html_view.pack(pady=20, padx=20)
-	else:
-		html_view = HTMLLabel(data_frame, html="", background="#191919")
-		html_view.pack(pady=20, padx=20)
+	global isFirstWord
 
 	# Load entry value to perform operations with it
 	entry_input = word_entry.get().lower()
@@ -208,6 +205,8 @@ current_searched_word.place(relx=0.5, rely=0.08, anchor='center')
 data_frame = ctk.CTkScrollableFrame(master=result_frame, width=700, height=400)
 data_frame.place(relx=0.5, rely=0.55, anchor='center')
 
+html_view = HTMLLabel(data_frame, html="", background=frame_color)
+html_view.pack(pady=20, padx=20)
 
 # Bind 'enter' to start the process
 root.bind('<Return>', search_word_api)

@@ -36,18 +36,22 @@ def extract_definitions(response):
 	return json_to_html(definitions)
 
 def json_to_html(definitions):
-    html_sample=""
+    html_sample_light=""
+    html_sample_dark=""
     count = 1
 
     list_pfs = list(definitions.keys())
 
     for pfs in list_pfs:
-        html_sample += f"<h5 style='color: #ffffff;'>{pfs.title()}</h5>"
+        html_sample_dark += f"<h5 style='color: #ffffff;'>{pfs.title()}</h5>"
+        html_sample_light += f"<h5 style='color: #000000;'>{pfs.title()}</h5>"
         for definition in definitions[pfs]:
-            html_sample += f"<p style='color: #ffffff; font-size: 12px;'>‎ {count}. {definition}</p>"
+            html_sample_dark += f"<p style='color: #ffffff; font-size: 12px;'>‎ {count}. {definition}</p>"
+            html_sample_light += f"<p style='color: #000000; font-size: 12px;'>‎ {count}. {definition}</p>"
             count += 1
         if list_pfs[-1] != pfs:
-            html_sample += "<div style='font-size: 1px;'>‎</div>"
+            html_sample_dark += "<div style='font-size: 1px;'>‎</div>"
+            html_sample_light += "<div style='font-size: 1px;'>‎</div>"
         count = 1
 
-    return html_sample
+    return html_sample_light, html_sample_dark

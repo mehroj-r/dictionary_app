@@ -2,10 +2,13 @@ import customtkinter as ctk
 from functions import request_word
 from PIL import ImageTk, Image
 from tkhtmlview import HTMLLabel
+from ctypes import windll
+import darkdetect
 
 
 
 # Constant app parameters
+windll.shcore.SetProcessDpiAwareness(1)
 root = ctk.CTk(fg_color=("white", "#141414"))
 root.title("R-Dictionary App")
 width= root.winfo_screenwidth()
@@ -13,9 +16,12 @@ height= root.winfo_screenheight()
 root.geometry("%dx%d+%d+%d" % (800, 500, ((width - 800) // 2), ((height - 500) / 2)))
 root.minsize(800, 500)
 ctk.set_default_color_theme("./data/custom-r.json")
-ctk.set_appearance_mode("system")
 
 
+if darkdetect.theme() == "Light":
+	ctk.set_appearance_mode("light")
+else:
+	ctk.set_appearance_mode("dark")
 
 ## Data resources
 
@@ -96,6 +102,14 @@ class AnimErrorFrame(ctk.CTkFrame):
 # Function to start the process
 def search_word_api(*x):
 
+	# HTML label to display API response (Follows light/dark theme)
+	if darkdetect.theme() == "Light":
+		html_view = HTMLLabel(data_frame, html="", background="#E5E5E5")
+		html_view.pack(pady=20, padx=20)
+	else:
+		html_view = HTMLLabel(data_frame, html="", background="#191919")
+		html_view.pack(pady=20, padx=20)
+
 	# Load entry value to perform operations with it
 	entry_input = word_entry.get().lower()
 
@@ -112,7 +126,10 @@ def search_word_api(*x):
 				error_popup.animate_back()
 
 			# HTML render for response visualization
-			html_view.set_html(response)
+			if darkdetect.theme() == "Light":
+				html_view.set_html(response[0])
+			else:
+				html_view.set_html(response[1])
 
 			# Show animation between Input and Response frames
 			search_word_frame.animate_up()	
@@ -145,7 +162,6 @@ def back_to_new_word(*x):
 
 	# Unbind unnessary key
 	root.unbind('<Escape>')
-
 
 
 
@@ -192,9 +208,6 @@ current_searched_word.place(relx=0.5, rely=0.08, anchor='center')
 data_frame = ctk.CTkScrollableFrame(master=result_frame, width=700, height=400)
 data_frame.place(relx=0.5, rely=0.55, anchor='center')
 
-# HTML label to display API resopnse
-html_view = HTMLLabel(data_frame, html="", background="#191919")
-html_view.pack(pady=20, padx=20)
 
 # Bind 'enter' to start the process
 root.bind('<Return>', search_word_api)

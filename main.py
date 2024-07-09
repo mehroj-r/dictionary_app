@@ -37,7 +37,6 @@ restart_image = ctk.CTkImage(light_image=Image.open("./data/restart.png"), dark_
 class AnimFrame2(ctk.CTkFrame):
 	def __init__(self, parent, width, height, fg_color):
 		super().__init__(master=parent, width=width, height=height, fg_color=fg_color)
-
 		self.rel_x=0.5
 		self.rel_y=-0.5
 
@@ -58,7 +57,6 @@ class AnimFrame2(ctk.CTkFrame):
 class AnimFrame1(ctk.CTkFrame):
 	def __init__(self, parent, width, height):
 		super().__init__(master=parent, width=width, height=height)
-
 		self.rel_x=0.5
 		self.rel_y=0.5
 
@@ -79,7 +77,6 @@ class AnimFrame1(ctk.CTkFrame):
 class AnimErrorFrame(ctk.CTkFrame):
 	def __init__(self, parent, width, height, border_width, border_color):
 		super().__init__(master=parent, width=width, height=height, border_color=border_color, border_width=border_width)
-
 		self.rel_x=0.85
 		self.rel_y=-0.08
 		self.status="inactive"
@@ -114,14 +111,11 @@ def search_word_api(*x):
 
 		# Receive API response
 		response = request_word(entry_input)
-
 		# Check if request was successful
 		if response != False:
-
 			# Return the error popup
 			if error_popup.status != "inactive":
 				error_popup.animate_back()
-
 			# HTML render for response visualization
 			if darkdetect.theme() == "Light":
 				html_view.set_html(response[0])
@@ -129,14 +123,11 @@ def search_word_api(*x):
 				html_view.set_html(response[1])
 
 			# Show animation between Input and Response frames
-			search_word_frame.animate_up()	
-
+			search_word_frame.animate_up()
 			# Passing new word as title for result_frame
 			current_searched_word.configure(text = entry_input)
-
 			# Bind 'espace' to comeback to input menu
 			root.bind('<Escape>', back_to_new_word)
-
 			# Unbind unnessary key
 			root.bind('<Return>')
 		else:
@@ -150,13 +141,10 @@ def back_to_new_word(*x):
 
 	# Initializing animation
 	result_frame.animate_back_up()
-
 	# Clearing input entry
 	word_entry.delete(0, 999)
-
 	# Bind 'enter' to start the request
 	root.bind('<Return>', search_word_api)
-
 	# Unbind unnessary key
 	root.unbind('<Escape>')
 

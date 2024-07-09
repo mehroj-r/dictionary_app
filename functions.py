@@ -1,5 +1,6 @@
-from credentials import API_KEY # Requires own API KEY to request API response
+from credentials import API_KEY  # Requires own API KEY to request API response
 import requests
+
 
 def request_word(word):
     request_session = requests.Session()
@@ -22,22 +23,26 @@ def request_word(word):
     else:
         return False
 
-    
 
 def extract_definitions(response):
-	definitions = {}
-	for item in response:
-		pfs = item['partOfSpeech']
-		definition = item['text']
-		if pfs not in definitions.keys():
-			definitions[pfs]=[]
-		definitions[pfs].append(definition)
+    definitions = {}
+    print(response)
+    for item in response:
+        if 'partOfSpeech' not in item.keys():
+            definitions['Error'] = ["The word is not in the dictionary."]
+            return json_to_html(definitions)
+        pfs = item['partOfSpeech']
+        definition = item['text']
+        if pfs not in definitions.keys():
+            definitions[pfs] = []
+        definitions[pfs].append(definition)
+    print(definitions)
+    return json_to_html(definitions)
 
-	return json_to_html(definitions)
 
 def json_to_html(definitions):
-    html_sample_light=""
-    html_sample_dark=""
+    html_sample_light = ""
+    html_sample_dark = ""
     count = 1
 
     list_pfs = list(definitions.keys())

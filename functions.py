@@ -26,7 +26,6 @@ def request_word(word):
 
 def extract_definitions(response):
     definitions = {}
-    print(response)
     for item in response:
         if 'partOfSpeech' not in item.keys():
             definitions['Error'] = ["The word is not in the dictionary."]
@@ -36,7 +35,6 @@ def extract_definitions(response):
         if pfs not in definitions.keys():
             definitions[pfs] = []
         definitions[pfs].append(definition)
-    print(definitions)
     return json_to_html(definitions)
 
 
